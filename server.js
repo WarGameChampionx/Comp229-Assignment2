@@ -14,18 +14,20 @@ import app from "./server/express.js";
 import router from "./server/assets-router.js";
 import connectDB from "./server/config/db.js";
 import contactRoutes from "./server/routes/contact.routes.js";
-import educationRoutes from "./server/routes/education.routes.js";
+import qualificationRoutes from "./server/routes/qualification.routes.js";
 import projectRoutes from "./server/routes/project.routes.js";
 import userRoutes from "./server/routes/user.routes.js";
+import authRoutes from "./server/routes/auth.routes.js";
 
 connectDB();
 
 app.use("/src", router);
 
 app.use("/api/contacts", contactRoutes);
-app.use("/api/educations", educationRoutes);
+app.use("/api/qualifications", qualificationRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use("/", function (req, res) {
     res.json({

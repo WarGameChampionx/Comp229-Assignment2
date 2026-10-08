@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -12,7 +13,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     created: {
         type: Date,
@@ -21,6 +23,24 @@ const userSchema = new mongoose.Schema({
     updated: {
         type: Date,
         default: Date.now
+    }
+});
+
+// Hash passwords before saving.
+userSchema.pre("save", async function() {
+    if (!this.isModified("password"))
+    {
+        return;
+    }
+
+    this.password = await bcrypt.hash(this.password, 12);
+});
+
+// Exclude password when serializing user documents.
+userSchema.set("toJSON", {
+    transform: function(doc, ret) {
+        delete ret.password;
+        return ret;
     }
 });
 

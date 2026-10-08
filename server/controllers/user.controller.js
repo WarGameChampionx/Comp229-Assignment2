@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 export const getUsers = async (req, res) => {
     try
     {
-        const users = await User.find();
+        const users = await User.find().select("-password");
         res.json(users);
     }
     catch (error)
@@ -15,7 +15,8 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try
     {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).select("-password");
+
         if (!user)
         {
             return res.status(404).json({ message: "User not found" });
@@ -32,7 +33,14 @@ export const getUserById = async (req, res) => {
 export const createUser = async (req, res) => {
     try
     {
-        const user      = new User(req.body);
+        const { name, email, password } = req.body;
+
+        const user = new User({
+            name,
+            email,
+            password
+        });
+
         const savedUser = await user.save();
 
         res.status(201).json(savedUser);
@@ -46,11 +54,33 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try
     {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const user = await User.findById(req.params.id);
+
         if (!user)
         {
             return res.status(404).json({ message: "User not found" });
         }
+
+        const { name, email, password } = req.body;
+
+        if (name !== undefined)
+        {
+            user.name = name;
+        }
+
+        if (email !== undefined)
+        {
+            user.email = email;
+        }
+
+        if (password !== undefined)
+        {
+            user.password = password;
+        }
+
+        user.updated = new Date();
+
+        await user.save();
 
         res.json(user);
     }
@@ -64,6 +94,7 @@ export const deleteUser = async (req, res) => {
     try
     {
         const user = await User.findByIdAndDelete(req.params.id);
+
         if (!user)
         {
             return res.status(404).json({ message: "User not found" });
@@ -82,7 +113,7 @@ export const deleteAllUsers = async (req, res) => {
     {
         await User.deleteMany({});
 
-        res.json({message: "All users deleted"});
+        res.json({ message: "All users deleted" });
     }
     catch (error)
     {

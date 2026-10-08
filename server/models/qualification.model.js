@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 
-const educationSchema = new mongoose.Schema({
+const qualificationSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
     },
-    firstname: {
+    firstName: {
         type: String,
         required: true
     },
-    lastname: {
+    lastName: {
         type: String,
         required: true
     },
@@ -24,9 +24,9 @@ const educationSchema = new mongoose.Schema({
         type: String
     }
 }, {
-    collection: "education"
+    collection: "qualifications"
 });
 
-const Education = mongoose.model("Education", educationSchema);
+const Qualification = mongoose.model("Qualification", qualificationSchema);
 
-export default Education;
+export default Qualification;

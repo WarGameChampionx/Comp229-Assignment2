@@ -1,21 +1,21 @@
 import express from "express";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 import {
     getProjects,
     getProjectById,
     createProject,
     updateProject,
-    deleteProject,
-    deleteAllProjects
+    deleteProject
 } from "../controllers/project.controller.js";
 
 const router = express.Router();
 
 router.get("/", getProjects);
 router.get("/:id", getProjectById);
-router.post("/", createProject);
-router.put("/:id", updateProject);
-router.delete("/:id", deleteProject);
-router.delete("/", deleteAllProjects);
+
+router.post("/", requireAuth, createProject);
+router.put("/:id", requireAuth, updateProject);
+router.delete("/:id", requireAuth, deleteProject);
 
 export default router;
